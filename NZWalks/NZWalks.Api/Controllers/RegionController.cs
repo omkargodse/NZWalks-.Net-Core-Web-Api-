@@ -120,7 +120,7 @@ namespace NZWalks.Api.Controllers
             }; ; 
 
             // Return ok response
-            await region.DeleteAsync(id);
+            //await region.DeleteAsync(id);
             return Ok(regionDTO);
         }
 
