@@ -12,11 +12,15 @@ namespace NZWalks.Api.Controllers
     {
         private readonly IWalk walk;
         private readonly IMapper mapper;
+        private readonly IRegion regionService;
+        private readonly IWalkDifficulty walkDifficultyService;
 
-        public WalkController(IWalk walk,IMapper mapper)
+        public WalkController(IWalk walk,IMapper mapper, IRegion region, IWalkDifficulty walkDifficulty)
         {
             this.walk = walk;
             this.mapper = mapper;
+            this.regionService = region;
+            this.walkDifficultyService = walkDifficulty;
         }
 
         [HttpGet]
@@ -46,6 +50,9 @@ namespace NZWalks.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddWalk([FromBody] Models.DTO.AddWalkRequest newWalk)
         {
+            //validate request 
+            if (!(await ValidateAddWalk(newWalk)))
+                return BadRequest(ModelState);
             // convert dto to domain 
             var walkDomain = new Models.Domains.Walk
             {
@@ -76,6 +83,9 @@ namespace NZWalks.Api.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateWalkAsync([FromRoute] Guid id, [FromBody] Models.DTO.UpdateWalkRequest walkRequest)
         {
+            //Validate request 
+            if (!(await ValidateUpdateWalkAsync(walkRequest)))
+                return BadRequest(ModelState);
             // DTO to domain 
             var walkDomain = new Models.Domains.Walk()
             {
@@ -123,5 +133,57 @@ namespace NZWalks.Api.Controllers
             
             return Ok(WalkDTO);
         }
+
+        #region Private methods
+        private async Task<bool> ValidateAddWalk(Models.DTO.AddWalkRequest newWalk)
+        {
+            if(newWalk == null) 
+                ModelState.AddModelError(nameof(newWalk),$"{nameof(newWalk)} Walk data is required");
+
+            if (string.IsNullOrWhiteSpace(newWalk.Name))
+                ModelState.AddModelError(nameof(newWalk.Name), $"{nameof(newWalk.Name)} can't be empty, null");
+
+            if (newWalk.Length <= 0)
+                ModelState.AddModelError(nameof(newWalk.Length),$"{nameof(newWalk.Length)} can't be null, zero or empty");
+            
+            var region = await regionService.GetAsync(newWalk.RegionID);
+            if (region==null)
+                ModelState.AddModelError(nameof(newWalk.RegionID), $"{nameof(newWalk.RegionID)} is invalid");
+
+            var walkDiff = await walkDifficultyService.GetWalkDiffsByID(newWalk.WalkDifficultyId);
+            if (walkDiff == null)
+                ModelState.AddModelError(nameof(newWalk.WalkDifficultyId), $"{nameof(newWalk.WalkDifficultyId)} is invalid");
+
+            if (ModelState.ErrorCount > 0)
+                return false;
+
+            return true;
+        }
+
+        private async Task<bool> ValidateUpdateWalkAsync(Models.DTO.UpdateWalkRequest walkRequest)
+        {
+            if (walkRequest == null)
+                ModelState.AddModelError(nameof(walkRequest), $"{nameof(walkRequest)} cannot be empty");
+
+            if (string.IsNullOrWhiteSpace(walkRequest.Name))
+                ModelState.AddModelError(nameof(walkRequest.Name), $"{nameof(walkRequest.Name)} can't be empty, null");
+
+            if (walkRequest.Length <= 0)
+                ModelState.AddModelError(nameof(walkRequest.Length), $"{nameof(walkRequest.Length)} can't be null, zero or empty");
+
+            var region = regionService.GetAsync(walkRequest.RegionID);
+            if (region == null)
+                ModelState.AddModelError(nameof(walkRequest.RegionID), $"{nameof(walkRequest.RegionID)} is invalid");
+
+            var walkDiff = walkDifficultyService.GetWalkDiffsByID(walkRequest.WalkDifficultyId);
+            if (walkDiff == null)
+                ModelState.AddModelError(nameof(walkRequest.WalkDifficultyId), $"{nameof(walkRequest.WalkDifficultyId)} is invalid");
+
+            if (ModelState.ErrorCount > 0)
+                return false;
+
+            return true;
+        }
+        #endregion
     }
 }
