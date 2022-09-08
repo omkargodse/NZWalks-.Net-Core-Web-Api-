@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using NZWalks.Api.Data;
 using NZWalks.Api.Repositories;
@@ -15,6 +16,7 @@ builder.Services.AddScoped<IRegion, RegionRepository>();
 builder.Services.AddScoped<IWalk,WalkRepository>();
 builder.Services.AddScoped<IWalkDifficulty,WalkDifficultyRepository>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

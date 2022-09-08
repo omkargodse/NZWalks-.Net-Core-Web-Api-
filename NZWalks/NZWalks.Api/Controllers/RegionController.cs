@@ -133,8 +133,8 @@ namespace NZWalks.Api.Controllers
         public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] Models.DTO.UpdateRegionRequest regionX)
         {
             //Validate request
-            if (!ValidateUpdateRegion(regionX))
-                return BadRequest(ModelState);
+            //if (!ValidateUpdateRegion(regionX))
+            //    return BadRequest(ModelState);
 
             //Convert DTO to domain  model
             var regionDomain = new Models.Domains.Region()

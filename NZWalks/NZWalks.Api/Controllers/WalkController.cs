@@ -137,14 +137,14 @@ namespace NZWalks.Api.Controllers
         #region Private methods
         private async Task<bool> ValidateAddWalk(Models.DTO.AddWalkRequest newWalk)
         {
-            if(newWalk == null) 
-                ModelState.AddModelError(nameof(newWalk),$"{nameof(newWalk)} Walk data is required");
+            //if(newWalk == null) 
+            //    ModelState.AddModelError(nameof(newWalk),$"{nameof(newWalk)} Walk data is required");
 
-            if (string.IsNullOrWhiteSpace(newWalk.Name))
-                ModelState.AddModelError(nameof(newWalk.Name), $"{nameof(newWalk.Name)} can't be empty, null");
+            //if (string.IsNullOrWhiteSpace(newWalk.Name))
+            //    ModelState.AddModelError(nameof(newWalk.Name), $"{nameof(newWalk.Name)} can't be empty, null");
 
-            if (newWalk.Length <= 0)
-                ModelState.AddModelError(nameof(newWalk.Length),$"{nameof(newWalk.Length)} can't be null, zero or empty");
+            //if (newWalk.Length <= 0)
+            //    ModelState.AddModelError(nameof(newWalk.Length),$"{nameof(newWalk.Length)} can't be null, zero or empty");
             
             var region = await regionService.GetAsync(newWalk.RegionID);
             if (region==null)
@@ -162,14 +162,14 @@ namespace NZWalks.Api.Controllers
 
         private async Task<bool> ValidateUpdateWalkAsync(Models.DTO.UpdateWalkRequest walkRequest)
         {
-            if (walkRequest == null)
-                ModelState.AddModelError(nameof(walkRequest), $"{nameof(walkRequest)} cannot be empty");
+            //if (walkRequest == null)
+            //    ModelState.AddModelError(nameof(walkRequest), $"{nameof(walkRequest)} cannot be empty");
 
-            if (string.IsNullOrWhiteSpace(walkRequest.Name))
-                ModelState.AddModelError(nameof(walkRequest.Name), $"{nameof(walkRequest.Name)} can't be empty, null");
+            //if (string.IsNullOrWhiteSpace(walkRequest.Name))
+            //    ModelState.AddModelError(nameof(walkRequest.Name), $"{nameof(walkRequest.Name)} can't be empty, null");
 
-            if (walkRequest.Length <= 0)
-                ModelState.AddModelError(nameof(walkRequest.Length), $"{nameof(walkRequest.Length)} can't be null, zero or empty");
+            //if (walkRequest.Length <= 0)
+            //    ModelState.AddModelError(nameof(walkRequest.Length), $"{nameof(walkRequest.Length)} can't be null, zero or empty");
 
             var region = regionService.GetAsync(walkRequest.RegionID);
             if (region == null)
